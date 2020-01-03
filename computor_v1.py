@@ -70,7 +70,7 @@ def concat_reduced(coeff):
 
 def print_info(argument, is_verbose, x=0, y=0, obj=[0,0]):
 	prints = {
-		1: "Usage: python3 computor_v1.py [-v] <equation>",
+		1: "Usage: python3 computor_v1.py [-v | --verbose | -f filename | --file filename] <equation[s]>",
 		2: "The polynomial degree is stricly greater than 2, I can't solve.",
 		3: "Discriminant is strictly positive, the two solutions are:\n%f\n%f" % (x, y),
 		4: "Discriminant is zero, one solution:\n%f" % x,
@@ -90,6 +90,37 @@ def print_info(argument, is_verbose, x=0, y=0, obj=[0,0]):
 		print(settings.CYAN, end="")
 	print(prints.get(argument), settings.NORMAL)
 
+# ---------------------------------- HANDLE EQUATIONS ----------------------------------
+def handle_args_equations():
+	for i in range(1 if not settings.verbose else 2, len(sys.argv)):
+		try:
+			print("\n--------------------ARGS------------------------------")
+			print_info(9, False, obj=str(sys.argv[i]))
+			coefficients = parse_equation(str(sys.argv[i]))
+			print_info(10, False, obj=concat_reduced(coefficients))
+			print_info(11, False, len(coefficients) - 1)
+			compute_result(coefficients)
+			print("---------------------------------------------------")
+		except:
+			print_info(1, False)
+			return 1
+
+def handle_file_equations(filename):
+	with open(filename) as file:
+		for cnt, line in enumerate(file):
+			try:
+				line = line.strip()
+				print("\n----------------------FILE-----------------------------")
+				print_info(9, False, obj=line)
+				coefficients = parse_equation(line)
+				print_info(10, False, obj=concat_reduced(coefficients))
+				print_info(11, False, len(coefficients) - 1)
+				compute_result(coefficients)
+				print("---------------------------------------------------")
+			except:
+				print_info(1, False)
+				return 1
+
 
 # ----------------------------------- MAIN FUNCTIONS -----------------------------------
 def compute_result(coeff):
@@ -108,7 +139,7 @@ def compute_result(coeff):
 		else:
 			print_info(5, False)
 	elif len_coeff == 2:
-		print_info(6, False, -(coeff[0]/coeff[1])) #not fully working  
+		print_info(6, False, 0 if coeff[1] == 0 else -(coeff[0]/coeff[1]))
 	elif len_coeff == 1:
 		print_info(7 if coeff[0] == 0 else 8, False)
 
@@ -117,22 +148,22 @@ def main():
 		print_info(1, False)
 		exit(0)
 
-	if str(sys.argv[1]) == "-v":
-		settings.verbose = True
-
-	for i in range(1 if not settings.verbose else 2, len(sys.argv)):
+	for i in range(1, len(sys.argv)):
+		if str(sys.argv[i]) == "-v" or str(sys.argv[i]) == "--verbose":
+			settings.verbose = True
+			continue
 		try:
-			print("\n---------------------------------------------------")
-			print_info(9, False, obj=str(sys.argv[i]))
-			coefficients = parse_equation(str(sys.argv[i]))
-			print_info(10, False, obj=concat_reduced(coefficients))
-			print_info(11, False, len(coefficients) - 1)
-			compute_result(coefficients)
-			print("---------------------------------------------------")
+			if str(sys.argv[i]) == "-f" or str(sys.argv[i]) == "--file":
+				handle_file_equations(str(sys.argv[i+1]))
+				return 0
 		except:
 			print_info(1, False)
-			exit(0)
+			return 1
+
+	handle_args_equations()
 
 
 if __name__ == '__main__':
 	main()
+
+
