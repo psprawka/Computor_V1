@@ -15,7 +15,7 @@ class settings:
 	MAROON = "\033[38;5;88m"
 	GREY = '\033[38;5;246m'
 	verbose = False
-	allowed_char_set = "X+-*/1234567890^ "
+	allowed_char_set = "X+-*/1234567890^ .="
 
 # ---------------------------------------- MATHS ----------------------------------------
 def square_root(number):
@@ -61,13 +61,16 @@ def parse_equation(equation):
 
 def valid_equation(equation):
 	for x in equation:
+		# print(settings.GREEN, equation, settings.NORMAL)
 		if x not in settings.allowed_char_set:
-			print_info(12, obj1=x, obj2=equation)
+			print_info(101, obj1=x, obj2=equation)
 			print_info(1)
 			exit(0)
 
 # -------------------------------------- PRINTING --------------------------------------
 def concat_reduced(coeff):
+	if len(coeff) == 1:
+		return str(coeff[0]) + " = 0"
 	res = []
 	for i in range(len(coeff)):
 		if coeff[i] < 0:
@@ -80,7 +83,8 @@ def concat_reduced(coeff):
 	return "".join(res)
 
 def print_info(argument, x=0, y=0, obj1=[0], obj2=[0]):
-	prints = {
+	logs = {
+		# Required logs start from 1 and grow up
 		1: "Usage: python3 computor_v1.py [-v | --verbose] [-f filename | --file filename] <equation[s]>",
 		2: "The polynomial degree is stricly greater than 2, I can't solve.",
 		3: "Discriminant is strictly positive, the two solutions are:\nx = %g or x = %g" % (x, y),
@@ -92,16 +96,21 @@ def print_info(argument, x=0, y=0, obj1=[0], obj2=[0]):
 		9: "Equation: %s" % obj1,
 		10: "Reduced:  %s" % obj1,
 		11: "Polynomial degree: %d" % x,
-		12: "Error: Invalid character '%s' in equation '%s'" % (obj1, obj2),
+		# Error handling starts from 100 and grows up
+		# 100: ,
+		101: "Error: Invalid character '%s' in equation '%s'" % (obj1, obj2),
+		# Addictional logs start from -1 grows down
 		-1: "Left side of equation: [%s] | Right side of equation: [%s]" % (obj1, obj2),
 		-2: "Left coefficients: %s | Right coefficients: %s" % (obj1, obj2),
 		-3: "Reduced coefficients: %s" % obj1,
 		-4: "Discriminant = b^2 - 4ac = %d" % x
 	}
-	if argument > 0:
-		print(prints.get(argument))
+	if argument > 0 and argument < 100:
+		print(logs.get(argument))
+	elif argument >= 100:
+		print(settings.RED, logs.get(argument), settings.NORMAL, sep="")
 	elif settings.verbose:
-		print(settings.CYAN, prints.get(argument), settings.NORMAL, sep="")
+		print(settings.CYAN, logs.get(argument), settings.NORMAL, sep="")
 
 
 # ---------------------------------- HANDLE EQUATIONS ----------------------------------
@@ -130,10 +139,15 @@ def handle_file_equations(filename):
 			try:
 				if line and '#' in line:
 					line = line.split("#")[0]
+			except:
+				print("WEIRD LOG LOG LOG CHECK THIAS OUT 0")
+				print_info(1)
+				return 1
+			try:
 				if len(line.strip()) > 0:
 					handle_equation(line.strip())
-					pass
 			except:
+				print("WEIRD LOG LOG LOG CHECK THIAS OUT 1")
 				print_info(1)
 				return 1
 
@@ -165,6 +179,7 @@ def main():
 		try:
 			handle_equation(inp)
 		except:
+			print("WEIRD LOG LOG LOG CHECK THIAS OUT 2")
 			print_info(1)
 		return 0
 	
@@ -174,6 +189,7 @@ def main():
 		try:
 			handle_equation(inp)
 		except:
+			print("WEIRD LOG LOG LOG CHECK THIAS OUT 3")
 			print_info(1)
 		return 0
 	
@@ -186,6 +202,7 @@ def main():
 				handle_file_equations(str(sys.argv[i+1]))
 				return 0
 		except:
+			print("WEIRD LOG LOG LOG CHECK THIAS OUT 4")
 			print_info(1)
 			return 1
 	handle_args_equations()
