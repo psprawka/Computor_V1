@@ -107,7 +107,7 @@ def print_logs(argument, x=0, y=0, obj1=[0], obj2=[0]):
 		2: "The polynomial degree is stricly greater than 2, I can't solve.",
 		3: "Discriminant is strictly positive, the two solutions are:\nx = %g or x = %g" % (x, y),
 		4: "Discriminant is zero, one solution: x = %g" % x,
-		5: "Discriminant is less than 0, the two complex solutions are:\nx = %g + %g or x = %g - %g" % (x, y, x, y),
+		5: "Discriminant is less than 0, the two complex solutions are:\nx = %g + %gj or x = %g - %gj" % (x, y, x, y),
 		6: "The solution is: x = %g" % x,
 		7: "Identity - all of real numbers are the solution.",
 		8: "Contradiction - none of real numbers is the solution.",
